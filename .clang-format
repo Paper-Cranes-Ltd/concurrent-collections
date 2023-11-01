@@ -1,0 +1,77 @@
+
+
+Language: Cpp
+Standard: c++20
+BasedOnStyle: Google
+ColumnLimit: 120
+
+AlignAfterOpenBracket: BlockIndent
+AlignArrayOfStructures: Right
+AlignConsecutiveAssignments:
+  Enabled: false
+AlignConsecutiveBitFields:
+  Enabled: true
+  AcrossComments: true
+  AcrossEmptyLines: true
+AlignConsecutiveMacros:
+  Enabled: false
+AlignEscapedNewlines: Right
+AlignOperands: AlignAfterOperator
+AlignTrailingComments: Never
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: Inline
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
+BinPackParameters: false
+BitFieldColonSpacing: Both
+BreakAfterAttributes: Never
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeConceptDeclarations: Always
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+BreakInheritanceList: BeforeComma
+BreakStringLiterals: false
+CommentPragmas: '//<'
+CompactNamespaces: false
+FixNamespaceComments: true
+IncludeIsMainSourceRegex: '.c(pp|xx)?$'
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^(<|").*precomp.h(>|")'
+    Priority: 0
+    SortPriority: 0
+  - Regex: '^<.*\.h(pp)?>$'
+    Priority: 1
+    SortPriority: 0
+  - Regex: '^".*\.h(pp)?"$'
+    Priority: 1
+    SortPriority: 1
+  - Regex: '^<.*>$'
+    Priority: 2
+  - Regex: '.*'
+    Priority: 3
+IndentRequiresClause: true
+IndentWrappedFunctionNames: true
+InsertNewlineAtEOF: true
+InsertTrailingCommas: Wrapped
+KeepEmptyLinesAtTheStartOfBlocks: true
+LambdaBodyIndentation: Signature
+MaxEmptyLinesToKeep: 2
+PackConstructorInitializers: NextLineOnly
+ReflowComments: true
+RemoveBracesLLVM: false
+RequiresClausePosition: OwnLine
+RequiresExpressionIndentation: OuterScope
+SeparateDefinitionBlocks: Always
+ShortNamespaceLines: 10
+SortIncludes: CaseSensitive
+SortUsingDeclarations: Lexicographic
