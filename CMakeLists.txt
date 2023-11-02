@@ -4,6 +4,7 @@ project(ConcurrentCollections LANGUAGES CXX)
 add_library(${PROJECT_NAME} INTERFACE
         src/ccol/common.h
         src/ccol/double_buffer_queue.h
+        src/ccol/trivial_vector.h
 )
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
@@ -23,7 +24,8 @@ if(${PROJECT_NAME}_BUILD_TESTS)
     fetchcontent_makeavailable(Catch2)
 
     set(TEST_PROJECT_NAME "${PROJECT_NAME}_Tests")
-    add_executable(${TEST_PROJECT_NAME} tests/double_buffer_queue_test.cpp)
+    add_executable(${TEST_PROJECT_NAME} tests/double_buffer_queue_test.cpp
+            tests/trivial_vector_test.cpp)
     target_link_libraries(${TEST_PROJECT_NAME} PRIVATE ${PROJECT_NAME})
     target_link_libraries(${TEST_PROJECT_NAME} PRIVATE Catch2::Catch2WithMain)
 endif()
