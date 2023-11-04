@@ -10,8 +10,12 @@
 
 namespace ccol {
 
+/// \brief A resizable collection for trivial types.
+/// \details Since trivial types are easy to copy we can make an easy to use collection that can
+/// be read to while being resized or written to safely. Any modification still includes
+/// a locking mechanism which is why read access copies the elements.
 template <typename TElement>
-class TrivialVector {
+class TrivialVector final {
  public:
   static_assert(std::is_trivially_copyable_v<TElement>, "Trivial vector can only contain trivial elements");
   using value_type = TElement;
