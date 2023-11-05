@@ -7,6 +7,7 @@
 #define CONCURRENTCOLLECTIONS_CONCURRENT_POINTER_VECTOR_H_
 
 #include <ccol/common.h>
+#include <ccol/spinlock.h>
 
 namespace ccol {
 
@@ -94,22 +95,11 @@ class TrivialVector final {
 
  private:
   std::array<std::atomic<value_type*>, 2> safe_buffers_{nullptr, nullptr};
-  mutable std::array<std::atomic<std::uint32_t>, 2> reader_counters_{0, 0};
+  mutable RWSpinLock reader_mutex_;
   mutable SpinLock write_mutex_;
   std::atomic<std::uint8_t> active_buffer_ = 0;
   std::atomic<size_type> size_ = 0;
   std::atomic<size_type> reserved_ = 0;
-
-  struct ScopedReader {
-    ScopedReader(std::atomic<std::uint32_t>& x)
-        : counter(x) {
-      ++counter;
-    }
-
-    ~ScopedReader() { --counter; }
-
-    std::atomic<std::uint32_t>& counter;
-  };
 
   void resize_no_lock(size_type new_size);
 };
@@ -137,9 +127,8 @@ void TrivialVector<TElement>::push_back(value_type new_value) {
 
 template <typename TElement>
 TrivialVector<TElement>::value_type TrivialVector<TElement>::operator[](TrivialVector::size_type index) const {
-  ScopedReader reader(reader_counters_[active_buffer_.load()]);
-  std::uint8_t read_index = &reader_counters_[0] == &reader.counter ? 0 : 1;
-  return safe_buffers_[read_index][index];
+  std::shared_lock _scoped_lock(reader_mutex_);
+  return safe_buffers_[active_buffer_.load()][index];
 }
 
 template <typename TElement>
@@ -166,16 +155,15 @@ void TrivialVector<TElement>::resize_no_lock(size_type new_size) {
 
     // sanity check make sure back buffer is free
     auto* old_buffer = safe_buffers_[active_buffer_.load() ^ 1].exchange(new_buffer);
+    delete[] old_buffer;
+
+    reader_mutex_.lock();
     std::uint8_t back_index_after_swap = active_buffer_.fetch_xor(1);
     size_.store(new_size);
     reserved_.store(new_reserved);
-    delete[] old_buffer;
+    reader_mutex_.unlock();
 
     // free back buffer after there are no readers
-    while (reader_counters_[back_index_after_swap].load() > 0) {
-      std::this_thread::yield();
-    }
-
     old_buffer = safe_buffers_[back_index_after_swap].exchange(nullptr);
     delete[] old_buffer;
   } else {

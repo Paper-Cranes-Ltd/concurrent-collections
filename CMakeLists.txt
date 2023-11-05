@@ -28,6 +28,7 @@ add_library(${PROJECT_NAME} INTERFACE
         src/ccol/double_buffer_queue.h
         src/ccol/trivial_vector.h
         src/ccol/sparse_vector.h
+        src/ccol/spinlock.h
 )
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)

@@ -7,6 +7,7 @@
 #define CONCURRENT_COLLECTIONS_DOUBLE_BUFFER_QUEUE_H_
 
 #include <ccol/common.h>
+#include <ccol/spinlock.h>
 
 namespace ccol {
 
@@ -70,8 +71,8 @@ class DoubleBufferQueue final {
 
  private:
   std::array<BufferType, 2> buffers_;
-  mutable std::mutex back_buffer_mutex_;
-  mutable std::shared_mutex front_buffer_mutex_;
+  mutable SpinLock back_buffer_mutex_;
+  mutable RWSpinLock front_buffer_mutex_;
   std::atomic<std::uint8_t> front_buffer_;
 };
 

@@ -9,6 +9,7 @@
 #include <ccol/common.h>
 #include <ccol/trivial_vector.h>
 #include <EASTL/fixed_vector.h>
+#include <ccol/spinlock.h>
 
 namespace ccol {
 
