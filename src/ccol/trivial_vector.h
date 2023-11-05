@@ -95,7 +95,7 @@ class TrivialVector final {
  private:
   std::array<std::atomic<value_type*>, 2> safe_buffers_{nullptr, nullptr};
   mutable std::array<std::atomic<std::uint32_t>, 2> reader_counters_{0, 0};
-  mutable std::recursive_mutex write_mutex_;
+  mutable SpinLock write_mutex_;
   std::atomic<std::uint8_t> active_buffer_ = 0;
   std::atomic<size_type> size_ = 0;
   std::atomic<size_type> reserved_ = 0;
@@ -110,6 +110,8 @@ class TrivialVector final {
 
     std::atomic<std::uint32_t>& counter;
   };
+
+  void resize_no_lock(size_type new_size);
 };
 
 template <typename TElement>
@@ -129,7 +131,7 @@ void TrivialVector<TElement>::replace(TrivialVector::size_type index, value_type
 template <typename TElement>
 void TrivialVector<TElement>::push_back(value_type new_value) {
   std::lock_guard _scoped_lock(write_mutex_);
-  resize(size() + 1);
+  resize_no_lock(size() + 1);
   safe_buffers_[active_buffer_.load()][size() - 1] = new_value;
 }
 
@@ -143,7 +145,11 @@ TrivialVector<TElement>::value_type TrivialVector<TElement>::operator[](TrivialV
 template <typename TElement>
 void TrivialVector<TElement>::resize(TrivialVector::size_type new_size) {
   std::lock_guard _scoped_lock(write_mutex_);
+  resize_no_lock(new_size);
+}
 
+template <typename TElement>
+void TrivialVector<TElement>::resize_no_lock(size_type new_size) {
   if (size() >= new_size) {
     size_.store(new_size);
     return;

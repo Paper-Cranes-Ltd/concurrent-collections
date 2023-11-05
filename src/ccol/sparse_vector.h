@@ -46,8 +46,8 @@ class SparseVector final {
 
   TrivialVector<page_type*> pages_;
   std::atomic<std::size_t> size_ = 0;
-  mutable std::mutex page_lock_;
-  mutable std::mutex write_lock_;
+  mutable SpinLock page_lock_;
+  mutable SpinLock write_lock_;
 };
 
 template <typename TElement, std::size_t TBucketSize>
