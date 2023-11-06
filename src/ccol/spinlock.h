@@ -10,27 +10,19 @@
 
 namespace ccol {
 
-class SpinLock {
+class spin_mutex {
  public:
   void lock() {
-    while(!try_lock()) {
+    while (!try_lock()) {
       while (lock_.load(std::memory_order_relaxed)) {
         noop();
       }
     }
   }
 
-  bool try_lock() {
-    return !lock_.exchange(true, std::memory_order_acquire);
-  }
-
-  bool is_locked() const {
-    return lock_.load(std::memory_order_relaxed);
-  }
-
-  void unlock() {
-    lock_.store(false, std::memory_order_release);
-  }
+  bool try_lock() { return !lock_.exchange(true, std::memory_order_acquire); }
+  bool is_locked() const { return lock_.load(std::memory_order_relaxed); }
+  void unlock() { lock_.store(false, std::memory_order_release); }
 
  protected:
   static void noop() {
@@ -40,41 +32,35 @@ class SpinLock {
     (void)0;
 #endif
   }
-
  private:
   std::atomic<bool> lock_ = {false};
 };
 
-class RWSpinLock : protected SpinLock {
+class shared_spin_mutex : protected spin_mutex {
  public:
-  using SpinLock::try_lock;
-  using SpinLock::is_locked;
+  using spin_mutex::try_lock;
+  using spin_mutex::is_locked;
 
   void lock() {
-    SpinLock::lock();
-    while(read_count_.load(std::memory_order_relaxed) > 0) {
+    spin_mutex::lock();
+    while (read_count_.load(std::memory_order_relaxed) > 0) {
       noop();
     }
   }
 
-  void unlock() {
-    SpinLock::unlock();
-  }
-
   void lock_shared() {
-    SpinLock::lock();
+    spin_mutex::lock();
     read_count_++;
-    SpinLock::unlock();
+    spin_mutex::unlock();
   }
 
-  void unlock_shared() {
-    read_count_--;
-  }
+  void unlock() { spin_mutex::unlock(); }
+  void unlock_shared() { read_count_--; }
 
  private:
   std::atomic<std::int32_t> read_count_ = {0};
 };
 
-}
+}  // namespace ccol
 
 #endif  // CONCURRENTCOLLECTIONS_SPINLOCK_H_

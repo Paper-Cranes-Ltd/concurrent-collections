@@ -7,26 +7,56 @@
 
 #include <barrier>
 
+struct ComplexObject {
+  std::uint32_t x;
+
+  ComplexObject() { x++; }
+  ComplexObject(const ComplexObject&) { x++; }
+  ComplexObject& operator=(const ComplexObject&) { x++; }
+  ComplexObject(ComplexObject&&) noexcept { x++; }
+  ComplexObject& operator=(ComplexObject&&) noexcept { x++; }
+  ~ComplexObject() { x++; }
+};
+
 TEST_CASE("DoubleBufferQueue Basic Operations", "[dbqueue]") {
-  ccol::DoubleBufferQueue<std::uint32_t> queue;
-  queue.push_back(0);
-  queue.push_back(1);
-  queue.push_back(2);
 
-  CHECK(queue.size() == 0); // NOLINT(*-container-size-empty)
+  SECTION("Normal buffer") {
+    ccol::double_buffer_queue<std::uint32_t> queue;
+    queue.push_back(0);
+    queue.push_back(1);
+    queue.push_back(2);
 
-  queue.swap_buffers();
+    CHECK(queue.size() == 0); // NOLINT(*-container-size-empty)
 
-  queue.lock();
-  CHECK(queue.size() == 3);
-  CHECK(queue[0] == 0);
-  CHECK(queue[1] == 1);
-  CHECK(queue[2] == 2);
-  queue.unlock();
+    queue.swap_buffers();
+
+    queue.lock();
+    CHECK(queue.size() == 3);
+    CHECK(queue[0] == 0);
+    CHECK(queue[1] == 1);
+    CHECK(queue[2] == 2);
+    queue.unlock();
+  }
+
+  SECTION("Complicated Object") {
+    ccol::double_buffer_queue<ComplexObject> queue;
+    queue.push_back({});
+    queue.push_back({});
+    queue.push_back({});
+
+    CHECK(queue.size() == 0); // NOLINT(*-container-size-empty)
+
+    queue.swap_buffers();
+
+    queue.lock();
+    CHECK(queue.size() == 3);
+    queue.unlock();
+  }
+
 }
 
 TEST_CASE("DoubleBufferQueue MT Access", "[dbqueue][!mayfail][!throws]") {
-  ccol::DoubleBufferQueue<std::uint32_t> queue;
+  ccol::double_buffer_queue<std::uint32_t> queue;
   std::barrier sync_point(2);
 
   std::jthread push_thread([&queue, &sync_point]() {

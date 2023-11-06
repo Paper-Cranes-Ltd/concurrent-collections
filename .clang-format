@@ -71,7 +71,7 @@ ReflowComments: true
 RemoveBracesLLVM: false
 RequiresClausePosition: OwnLine
 RequiresExpressionIndentation: OuterScope
-SeparateDefinitionBlocks: Always
+SeparateDefinitionBlocks: Leave
 ShortNamespaceLines: 10
 SortIncludes: CaseSensitive
 SortUsingDeclarations: Lexicographic

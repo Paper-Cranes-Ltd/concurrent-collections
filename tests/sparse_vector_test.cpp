@@ -33,7 +33,7 @@ std::atomic<std::int32_t> ConstructorDestructorTester::destruction_count = 0;
 
 TEST_CASE("SparseVector Basic Operations", "[svector]") {
   SECTION("Basic String") {
-    ccol::SparseVector<std::string, 1024> elements;
+    ccol::sparse_vector<std::string, 1024> elements;
     elements.emplace_back("0");
     elements.push_back("1");
     elements.push_back("2");
@@ -45,7 +45,7 @@ TEST_CASE("SparseVector Basic Operations", "[svector]") {
   }
 
   SECTION("Basic String Page Overflow") {
-    ccol::SparseVector<std::string, 2> elements;
+    ccol::sparse_vector<std::string, 2> elements;
     elements.emplace_back("0");
     elements.push_back("1");
     elements.push_back("2");
@@ -57,7 +57,7 @@ TEST_CASE("SparseVector Basic Operations", "[svector]") {
   }
 
   SECTION("Construction/Destruction Test") {
-    ccol::SparseVector<ConstructorDestructorTester, 512> elements;
+    ccol::sparse_vector<ConstructorDestructorTester, 512> elements;
     elements.emplace_back({});
     elements.push_back({});
 
@@ -73,7 +73,7 @@ TEST_CASE("SparseVector Basic Operations", "[svector]") {
 }
 
 TEST_CASE("SparseVector MT Access", "[svector][!mayfail][!throws]") {
-  ccol::SparseVector<std::uint32_t, 1024> elements;
+  ccol::sparse_vector<std::uint32_t, 1024> elements;
   std::barrier sync_point(3);
 
   {

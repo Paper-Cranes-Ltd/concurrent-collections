@@ -28,7 +28,7 @@ struct TrivialPoint final {
 
 TEST_CASE("TrivialVector Basic Operations", "[tvector]") {
   SECTION("Integer Elements") {
-    ccol::TrivialVector<std::uint32_t> elements;
+    ccol::trivial_vector<std::uint32_t> elements;
     elements.push_back(0);
     elements.push_back(1);
     elements.push_back(2);
@@ -47,7 +47,7 @@ TEST_CASE("TrivialVector Basic Operations", "[tvector]") {
 
   SECTION("Pointer Elements") {
     std::array<std::uint32_t, 2> row{0, 1};
-    ccol::TrivialVector<std::uint32_t*> elements;
+    ccol::trivial_vector<std::uint32_t*> elements;
     elements.push_back(row.data());
 
     CHECK(elements.size() == 1);  // NOLINT(*-container-size-empty)
@@ -58,7 +58,7 @@ TEST_CASE("TrivialVector Basic Operations", "[tvector]") {
   }
 
   SECTION("Trivial Struct Elements") {
-    ccol::TrivialVector<TrivialPoint> elements;
+    ccol::trivial_vector<TrivialPoint> elements;
     elements.push_back({0.0f, 0.0f});
     elements.push_back({0.0f, 1.0f});
     elements.push_back({1.0f, 0.0f});
@@ -71,7 +71,7 @@ TEST_CASE("TrivialVector Basic Operations", "[tvector]") {
 }
 
 TEST_CASE("TrivialVector MT Access", "[tvector][!mayfail][!throws]") {
-  ccol::TrivialVector<std::uint32_t> elements;
+  ccol::trivial_vector<std::uint32_t> elements;
   std::barrier sync_point(2);
 
   {

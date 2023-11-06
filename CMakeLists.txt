@@ -1,27 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(ConcurrentCollections LANGUAGES CXX)
 
-cmake_policy(SET CMP0097 NEW)
-
 include(FetchContent)
-
-fetchcontent_declare(
-        EABase
-        GIT_REPOSITORY https://github.com/electronicarts/EABase.git
-        GIT_TAG 2.09.06
-        GIT_SUBMODULES ""
-)
-
-fetchcontent_makeavailable(EABase)
-
-fetchcontent_declare(
-        EASTL
-        GIT_REPOSITORY https://github.com/electronicarts/EASTL.git
-        GIT_TAG 3.21.12
-        GIT_SUBMODULES ""
-)
-
-fetchcontent_makeavailable(EASTL)
 
 add_library(${PROJECT_NAME} INTERFACE
         src/ccol/common.h
@@ -33,7 +13,6 @@ add_library(${PROJECT_NAME} INTERFACE
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 target_include_directories(${PROJECT_NAME} INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/src/")
-target_link_libraries(${PROJECT_NAME} INTERFACE EASTL)
 
 option("${PROJECT_NAME}_BUILD_TESTS" "Should tests be built for concurrent collections." ${PROJECT_IS_TOP_LEVEL})
 
